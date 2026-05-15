@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 
+import ScrollArea from "./components/ScrollArea.vue";
 import HomeView from "./HomeView.vue";
 import LogsView from "./LogsView.vue";
 import { installConsoleBridge } from "./logger";
@@ -30,5 +31,14 @@ function currentRoute(): string {
 </script>
 
 <template>
-  <component :is="activeView" />
+  <ScrollArea class="app-scroll-area">
+    <component :is="activeView" />
+  </ScrollArea>
 </template>
+
+<style scoped>
+.app-scroll-area {
+  width: 100%;
+  height: 100%;
+}
+</style>

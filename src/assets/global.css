@@ -1,0 +1,36 @@
+:root {
+  --app-scrollbar-size: 10px;
+  --app-scrollbar-radius: 999px;
+  --app-scrollbar-track-hover: rgba(148, 163, 184, 0.08);
+  --app-scrollbar-track-active: rgba(148, 163, 184, 0.12);
+  --app-scrollbar-thumb: rgba(148, 163, 184, 0.32);
+  --app-scrollbar-thumb-hover: rgba(148, 163, 184, 0.44);
+  --app-scrollbar-thumb-active: rgba(125, 211, 252, 0.58);
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+}
+
+.os-theme-app.os-scrollbar {
+  --os-size: var(--app-scrollbar-size);
+  --os-padding-perpendicular: 2px;
+  --os-padding-axis: 2px;
+  --os-track-border-radius: var(--app-scrollbar-radius);
+  --os-track-bg: transparent;
+  --os-track-bg-hover: var(--app-scrollbar-track-hover);
+  --os-track-bg-active: var(--app-scrollbar-track-active);
+  --os-handle-border-radius: var(--app-scrollbar-radius);
+  --os-handle-bg: var(--app-scrollbar-thumb);
+  --os-handle-bg-hover: var(--app-scrollbar-thumb-hover);
+  --os-handle-bg-active: var(--app-scrollbar-thumb-active);
+  --os-handle-interactive-area-offset: 4px;
+}

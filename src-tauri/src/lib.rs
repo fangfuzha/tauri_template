@@ -11,9 +11,9 @@ use logging::{init_logging, log_message};
 /// Returns the absolute path to the generated frontend bindings.
 ///
 /// # Returns
-/// The resolved [`PathBuf`] pointing to `src/bindings.ts`.
+/// The resolved [`PathBuf`] pointing to `src/generated/bindings.ts`.
 pub fn bindings_path() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../src/bindings.ts")
+    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../src/generated/bindings.ts")
 }
 
 /// Builds a [`Builder`] with all exported Tauri commands.

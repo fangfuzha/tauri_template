@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-import { commands, type LogLevel } from "./bindings";
+import ScrollArea from "./components/ScrollArea.vue";
+import { commands, type LogLevel } from "./generated/bindings";
 import { logMessage } from "./logger";
 import { openLogsWindow } from "./windows";
 
@@ -63,23 +64,46 @@ async function emitFrontendLog(level: LogLevel): Promise<void> {
         <span>/logs</span> 路由渲染日志页面。
       </p>
 
-      <div class="actions">
-        <button type="button" @click="openLogs">打开日志窗口</button>
-        <button
-          type="button"
-          class="secondary"
-          @click="emitFrontendLog('info')"
-        >
-          发一条 info 日志
-        </button>
-        <button
-          type="button"
-          class="secondary"
-          @click="emitFrontendLog('warn')"
-        >
-          发一条 warn 日志
-        </button>
-      </div>
+      <ScrollArea axis="horizontal" class="actions-scroll">
+        <div class="actions-row">
+          <button type="button" @click="openLogs">打开日志窗口</button>
+          <button
+            type="button"
+            class="secondary"
+            @click="emitFrontendLog('trace')"
+          >
+            发一条 trace 日志
+          </button>
+          <button
+            type="button"
+            class="secondary"
+            @click="emitFrontendLog('debug')"
+          >
+            发一条 debug 日志
+          </button>
+          <button
+            type="button"
+            class="secondary"
+            @click="emitFrontendLog('info')"
+          >
+            发一条 info 日志
+          </button>
+          <button
+            type="button"
+            class="secondary"
+            @click="emitFrontendLog('warn')"
+          >
+            发一条 warn 日志
+          </button>
+          <button
+            type="button"
+            class="secondary"
+            @click="emitFrontendLog('error')"
+          >
+            发一条 error 日志
+          </button>
+        </div>
+      </ScrollArea>
 
       <p class="status-text">{{ logsWindowStatus }}</p>
 
@@ -95,8 +119,9 @@ async function emitFrontendLog(level: LogLevel): Promise<void> {
 
 <style scoped>
 .shell {
-  min-height: 100vh;
+  min-height: 100%;
   padding: 48px;
+  box-sizing: border-box;
   display: grid;
   background:
     radial-gradient(
@@ -119,6 +144,8 @@ async function emitFrontendLog(level: LogLevel): Promise<void> {
 
 .hero {
   width: min(760px, 100%);
+  min-width: 0;
+  box-sizing: border-box;
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 24px;
   background: rgba(15, 23, 42, 0.76);
@@ -160,12 +187,31 @@ h1 {
   color: #93c5fd;
 }
 
-.actions,
 .greet-form {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   align-items: center;
+}
+
+.actions-scroll {
+  width: 100%;
+  min-width: 0;
+}
+
+.actions-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: max-content;
+  min-width: 100%;
+  padding-bottom: 4px;
+  box-sizing: border-box;
+}
+
+.actions-row button {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 button,

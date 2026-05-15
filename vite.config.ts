@@ -1,12 +1,26 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import checker from "vite-plugin-checker";
 
 // @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
+const lintCommand = 'eslint "src/**/*.{ts,tsx,vue}"';
 
 // https://vite.dev/config/
-export default defineConfig(async () => ({
-  plugins: [vue()],
+export default defineConfig(async ({ command }) => ({
+  plugins: [
+    vue(),
+    ...(command === "serve"
+      ? [
+          checker({
+            eslint: {
+              lintCommand,
+              useFlatConfig: true,
+            },
+          }),
+        ]
+      : []),
+  ],
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

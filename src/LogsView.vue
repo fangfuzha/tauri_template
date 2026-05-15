@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from "vue";
 
-import { type LogEntry, type LogLevel } from "./bindings";
+import ScrollArea from "./components/ScrollArea.vue";
+import { type LogEntry, type LogLevel } from "./generated/bindings";
 import { logMessage, startLogBridge } from "./logger";
 
 const logEntries = ref<LogEntry[]>([]);
@@ -93,36 +94,41 @@ function levelClass(level: LogLevel): string {
         </button>
       </div>
 
-      <ul class="log-list">
-        <li
-          v-for="entry in logEntries"
-          :key="`${entry.timestampMs}-${entry.level}-${entry.message}`"
-          class="log-item"
-        >
-          <div class="log-meta">
-            <span class="tag" :class="levelClass(entry.level)">
-              {{ entry.level }}
-            </span>
-            <span class="tag source">{{ entry.source }}</span>
-            <span class="tag target">{{ entry.target ?? "app" }}</span>
-            <time class="log-time">{{
-              formatTimestamp(entry.timestampMs)
-            }}</time>
-          </div>
-          <p class="log-message">{{ entry.message }}</p>
-          <p v-if="entry.context.length > 0" class="log-context">
-            {{ formatContext(entry.context) }}
-          </p>
-        </li>
-      </ul>
+      <ScrollArea class="log-scroll">
+        <ul class="log-list">
+          <li
+            v-for="entry in logEntries"
+            :key="`${entry.timestampMs}-${entry.level}-${entry.message}`"
+            class="log-item"
+          >
+            <div class="log-meta">
+              <span class="tag" :class="levelClass(entry.level)">
+                {{ entry.level }}
+              </span>
+              <span class="tag source">{{ entry.source }}</span>
+              <span class="tag target">{{ entry.target ?? "app" }}</span>
+              <time class="log-time">{{
+                formatTimestamp(entry.timestampMs)
+              }}</time>
+            </div>
+            <p class="log-message">{{ entry.message }}</p>
+            <p v-if="entry.context.length > 0" class="log-context">
+              {{ formatContext(entry.context) }}
+            </p>
+          </li>
+        </ul>
+      </ScrollArea>
     </section>
   </main>
 </template>
 
 <style scoped>
 .logs-shell {
-  min-height: 100vh;
+  height: 100%;
   padding: 28px;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
   background:
     radial-gradient(
       circle at top left,
@@ -139,7 +145,10 @@ function levelClass(level: LogLevel): string {
 }
 
 .panel {
-  min-height: calc(100vh - 56px);
+  min-height: 0;
+  min-width: 0;
+  flex: 1;
+  box-sizing: border-box;
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 24px;
   background: rgba(15, 23, 42, 0.76);
@@ -149,6 +158,7 @@ function levelClass(level: LogLevel): string {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  overflow: hidden;
 }
 
 .panel-header {
@@ -215,13 +225,17 @@ button:hover {
   color: #cbd5e1;
 }
 
+.log-scroll {
+  flex: 1;
+  min-height: 0;
+}
+
 .log-list {
   margin: 0;
-  padding: 0;
+  padding: 0 10px 0 0;
   list-style: none;
   display: grid;
   gap: 12px;
-  overflow: auto;
 }
 
 .log-item {
@@ -274,7 +288,6 @@ button:hover {
   }
 
   .panel {
-    min-height: calc(100vh - 32px);
     padding: 20px;
   }
 }

@@ -7,7 +7,7 @@ import {
   type LogLevel,
   type LogMessageInput,
   type LogSource,
-} from "./bindings";
+} from "./generated/bindings";
 
 export const LOG_EVENT = "tauri_template:log";
 

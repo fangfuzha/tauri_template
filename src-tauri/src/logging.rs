@@ -76,6 +76,7 @@ pub struct LogMessageInput {
 #[derive(Debug, Clone, Deserialize, Serialize, Type, Eq, PartialEq)]
 #[serde(rename_all = "camelCase")]
 pub struct LogEntry {
+    #[specta(type = specta_typescript::Number)]
     pub timestamp_ms: u64,
     pub level: LogLevel,
     pub source: LogSource,
