@@ -3,7 +3,6 @@ import { ref } from "vue";
 
 import ScrollArea from "./components/ScrollArea.vue";
 import { commands, type LogLevel } from "./generated/bindings";
-import { logMessage } from "./logger";
 import { openLogsWindow } from "./windows";
 
 const greetMsg = ref("");
@@ -18,10 +17,7 @@ const logsWindowStatus = ref("日志窗口未打开");
 async function greet(): Promise<void> {
   greetMsg.value = await commands.greet(name.value);
 
-  await logMessage("info", `Greeted ${name.value || "guest"}`, {
-    target: "HomeView.vue",
-    context: [{ key: "name", value: name.value || "guest" }],
-  });
+  console.info("Greeted %s", name.value || "guest");
 }
 
 /**
@@ -34,10 +30,7 @@ async function openLogs(): Promise<void> {
   await openLogsWindow();
   logsWindowStatus.value = "日志窗口已打开";
 
-  await logMessage("info", "Opened independent logs window", {
-    target: "HomeView.vue",
-    context: [{ key: "route", value: "/logs" }],
-  });
+  console.info("Opened independent logs window");
 }
 
 /**
@@ -47,9 +40,9 @@ async function openLogs(): Promise<void> {
  * @returns A promise that resolves when the backend accepts the log.
  */
 async function emitFrontendLog(level: LogLevel): Promise<void> {
-  await logMessage(level, `Frontend ${level} log from the template`, {
+  console[level](`Frontend ${level} log from the template`, {
     target: "HomeView.vue",
-    context: [{ key: "action", value: "demo-log" }],
+    action: "demo-log",
   });
 }
 </script>

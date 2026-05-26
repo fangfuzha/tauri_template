@@ -4,7 +4,6 @@ import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import ScrollArea from "./components/ScrollArea.vue";
 import HomeView from "./HomeView.vue";
 import LogsView from "./LogsView.vue";
-import { installConsoleBridge } from "./logger";
 
 const route = ref(currentRoute());
 
@@ -13,7 +12,6 @@ const activeView = computed(() =>
 );
 
 onMounted(() => {
-  installConsoleBridge();
   window.addEventListener("hashchange", syncRoute);
 });
 

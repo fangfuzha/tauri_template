@@ -4,11 +4,12 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "tauri dev": "tauri dev",
+    "tauri build": "tauri build",
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "lint": "eslint \"src/**/*.{ts,tsx,vue}\"",
-    "preview": "vite preview",
-    "tauri": "tauri dev"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@tauri-apps/api": "^2",

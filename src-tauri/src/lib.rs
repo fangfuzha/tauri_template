@@ -1,41 +1,13 @@
-use std::path::PathBuf;
-
 use anyhow::Context;
 use specta_typescript::Typescript;
-use tauri_specta::{collect_commands, Builder};
 
-mod logging;
+mod command;
+mod utils;
 
-use logging::{init_logging, log_message};
+use utils::logging::init_logging;
 
-/// Returns the absolute path to the generated frontend bindings.
-///
-/// # Returns
-/// The resolved [`PathBuf`] pointing to `src/generated/bindings.ts`.
-pub fn bindings_path() -> PathBuf {
-    PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../src/generated/bindings.ts")
-}
-
-/// Builds a [`Builder`] with all exported Tauri commands.
-///
-/// # Returns
-/// A configured [`Builder`] ready for export and invoke handler wiring.
-pub fn specta_builder() -> Builder<tauri::Wry> {
-    Builder::<tauri::Wry>::new().commands(collect_commands![greet, log_message])
-}
-
-/// Greets the caller by name.
-///
-/// # Arguments
-/// * `name` - The name to greet.
-///
-/// # Returns
-/// A greeting message.
-#[tauri::command]
-#[specta::specta]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
+pub use command::specta_builder;
+pub use utils::bindings_path;
 
 /// Starts the Tauri application and wires up commands and bindings.
 ///
@@ -44,6 +16,12 @@ fn greet(name: &str) -> String {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let builder = specta_builder();
+    let max_level = if cfg!(debug_assertions) {
+        "trace"
+    } else {
+        "info"
+    }
+    .to_string();
 
     #[cfg(debug_assertions)]
     builder
@@ -52,8 +30,8 @@ pub fn run() {
 
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
-        .setup(|app| {
-            { init_logging((&app.handle().clone()).clone()) }
+        .setup(move |app| {
+            { init_logging((&app.handle().clone()).clone(), max_level.clone()) }
                 .context("failed to initialize logging")?;
             Ok(())
         })

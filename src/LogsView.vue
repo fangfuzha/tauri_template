@@ -3,7 +3,7 @@ import { onBeforeUnmount, onMounted, ref } from "vue";
 
 import ScrollArea from "./components/ScrollArea.vue";
 import { type LogEntry, type LogLevel } from "./generated/bindings";
-import { logMessage, startLogBridge } from "./logger";
+import { startLogBridge } from "./logger";
 
 const logEntries = ref<LogEntry[]>([]);
 const logStatus = ref("Log bridge is starting...");
@@ -11,15 +11,15 @@ const logStatus = ref("Log bridge is starting...");
 let stopLogBridge: (() => void) | undefined;
 
 onMounted(async () => {
-  stopLogBridge = await startLogBridge((entry) => {
-    logEntries.value = [entry, ...logEntries.value].slice(0, 400);
-  });
+  stopLogBridge = await startLogBridge(
+    (entry) => {
+      logEntries.value = [entry, ...logEntries.value].slice(0, 400);
+    },
+    { mirrorBackend: true },
+  );
 
   logStatus.value = "Log bridge is active";
-  await logMessage("info", "Logs window bridge ready", {
-    target: "LogsView.vue",
-    context: [{ key: "route", value: "/logs" }],
-  });
+  console.info("Logs window bridge ready", { route: "/logs" });
 });
 
 onBeforeUnmount(() => {
@@ -33,9 +33,8 @@ onBeforeUnmount(() => {
  * @returns A promise that resolves when the backend accepts the log.
  */
 async function emitFrontendLog(level: LogLevel): Promise<void> {
-  await logMessage(level, `Logs window ${level} log from the template`, {
-    target: "LogsView.vue",
-    context: [{ key: "action", value: "logs-window-demo" }],
+  console[level](`Logs window ${level} log from the template`, {
+    action: "logs-window-demo",
   });
 }
 
@@ -98,7 +97,7 @@ function levelClass(level: LogLevel): string {
         <ul class="log-list">
           <li
             v-for="entry in logEntries"
-            :key="`${entry.timestampMs}-${entry.level}-${entry.message}`"
+            :key="entry.id"
             class="log-item"
           >
             <div class="log-meta">

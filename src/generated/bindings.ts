@@ -7,11 +7,8 @@ export const commands = {
 	/**
 	 *  Greets the caller by name.
 	 * 
-	 *  # Arguments
-	 *  * `name` - The name to greet.
-	 * 
-	 *  # Returns
-	 *  A greeting message.
+	 *  This handler is kept next to command builder so command exports and
+	 *  collection live together.
 	 */
 	greet: (name: string) => __TAURI_INVOKE<string>("greet", { name }),
 	/**
@@ -24,6 +21,10 @@ export const commands = {
 	 *  The enriched log entry that was dispatched.
 	 */
 	logMessage: (input: LogMessageInput) => __TAURI_INVOKE<LogEntry>("log_message", { input }),
+	/**  Starts mirroring backend logs to the frontend event stream. */
+	beginLogMirror: () => __TAURI_INVOKE<void>("begin_log_mirror"),
+	/**  Stops mirroring backend logs to the frontend event stream for one subscriber. */
+	endLogMirror: () => __TAURI_INVOKE<void>("end_log_mirror"),
 };
 
 /* Types */
@@ -33,6 +34,7 @@ export type LogContextItem = {
 };
 
 export type LogEntry = {
+	id: string,
 	timestampMs: number,
 	level: LogLevel,
 	source: LogSource,
@@ -44,9 +46,11 @@ export type LogEntry = {
 	modulePath: string | null,
 };
 
+/**  Log level exposed to the frontend and bindings. */
 export type LogLevel = "trace" | "debug" | "info" | "warn" | "error";
 
 export type LogMessageInput = {
+	id?: string | null,
 	level: LogLevel,
 	message: string,
 	source?: LogSource,

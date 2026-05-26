@@ -10,11 +10,8 @@ use tauri_template_lib::{bindings_path, specta_builder};
 /// # Errors
 /// Returns an error if the bindings file cannot be generated or written.
 fn main() -> anyhow::Result<()> {
-    let builder = specta_builder();
-    let output_path = bindings_path();
-
-    builder
-        .export(Typescript::default(), output_path)
+    specta_builder()
+        .export(Typescript::default(), bindings_path())
         .context("Failed to export TypeScript bindings")?;
 
     Ok(())
